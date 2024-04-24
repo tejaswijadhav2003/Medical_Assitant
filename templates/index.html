@@ -121,15 +121,15 @@
                     <tbody>
 
                         <!-- Loop through the data arrays to create table rows dynamically -->
-                        {% for i in range(10) %}
-                        <tr>
-                            <td>{{ specialist_name[i] }}</td>
-                            <td>{{ specialist_ratings[i] }}</td>
-                            <td>{{ specialist_exp[i] }}</td>
-                            <td>{{ specialist_avai[i] }}</td>
-                            <td>{{ specialist_appoit[i] }}</td>
-                            <td>{{ specialist_loc[i] }}</td>
-                        </tr>
+                        {% for i in range(specialist_name | length) %}
+                            <tr>
+                                <td>{{ specialist_name[i] }}</td>
+                                <td>{{ specialist_ratings[i] }}</td>
+                                <td>{{ specialist_exp[i] }}</td>
+                                <td>{{ specialist_avai[i] }}</td>
+                                <td>{{ specialist_appoit[i] }}</td>
+                                <td>{{ specialist_loc[i] }}</td>
+                            </tr>
                         {% endfor %}
                     </tbody>
                 </table>
