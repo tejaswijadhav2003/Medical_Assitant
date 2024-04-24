@@ -84,19 +84,16 @@ def helper(dis):
     pre = [col for col in pre.values]
 
     med = medications[medications['Disease'] == dis]['Medication']
-    med = [med for med in med.values]
-
-    die = diets[diets['Disease'] == dis]['Diet']
-    die = [die for die in die.values]
+    med = ",".join([w for w in med])
 
     wrkout = workout[workout['disease'] == dis]['workout']
-
+    print(spec)
     ratings = details[details['Specialist'] == spec]["Ratings"]
-
-    # best_specialist = 0
-    # for i in ratings:
-    #     best_specialist = max(best_specialist, i)
-    # print(best_specialist)
+    print(med)
+    best_specialist = 0
+    for i in ratings:
+        best_specialist = max(best_specialist, i)
+    print(best_specialist)
     name = details[details['Specialist'] == spec]["Name"]
     ratings = details[details['Specialist'] == spec]["Ratings"]
     experience = details[details['Specialist'] == spec]["Experience"]
@@ -106,7 +103,7 @@ def helper(dis):
     print(name[0])
     for names in name:
         print(names)
-    return desc, pre, med, die, wrkout, spec, name, ratings, experience, avail, appointment, location
+    return desc, pre, med, wrkout, spec, name, ratings, experience, avail, appointment, location
 
 
 def get_predicted_value(patient_symptoms):
@@ -130,9 +127,10 @@ def predict():
         user_symptoms = [symptom.strip("[]' ") for symptom in user_symptoms]
         predicted_disease = get_predicted_value(user_symptoms)
         print(predicted_disease)
-        desc, pre, med, die, wrkout, spec, name, ratings, experience, avail, appointment, location = helper(predicted_disease)
-        symptoms = request.form.get('symptoms')
+        desc, pre, med, wrkout, spec, name, ratings, experience, avail, appointment, location = helper(predicted_disease)
 
+        symptoms = request.form.get('symptoms')
+        print(spec)
         return render_template("index.html", predicted_disease=predicted_disease, dis_des=desc, my_precautions=pre,
                                medications=med, workout=wrkout, specialist=spec, specialist_name = name,specialist_ratings = ratings, specialist_exp = experience, specialist_avai = avail, specialist_appoit = appointment, specialist_loc = location)
 
