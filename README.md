@@ -1,6 +1,18 @@
 # Medical Assistant
 
-Welcome to the Medical Assistant Website project! This project is built using the Flask framework for the backend and HTML/CSS for the frontend. The project demonstrates a simple health assistant application where users can select symptoms and receive relevant information.
+Welcome to the Medical Assistant Project! This project is designed to simplify healthcare navigation by providing a comprehensive recommendation system. It uses Flask for the backend and HTML/CSS for the frontend.
+
+## Project Overview
+Finding the right doctor often involves multiple steps, such as researching symptoms, identifying potential diseases, and searching for specialists with matching schedules. This system streamlines these processes by:
+
+- **Symptom Analysis**: Users can enter their symptoms, and the system predicts potential illnesses using mock data and disease predictor databases.
+- **Specialist Recommendations**: The system recommends specialists based on the predicted disease and user preferences. It uses healthcare provider databases and user ratings to find suitable doctors.
+- **Self-Care Guidance**: Along with doctor recommendations, the system offers suggestions for initial condition management, such as exercises, dietary plans, medications, and preventative measures.
+
+This comprehensive approach helps users find the right healthcare providers and offers guidance on managing their health.
+
+https://github.com/tejaswijadhav2003/Medical_Assitant/assets/94731975/f06587b1-f711-48ce-ad36-5a92fadbee47
+
 
 ## Prerequisites
 
