@@ -1,9 +1,7 @@
-
 from flask import Flask, render_template, request, jsonify
 import pandas as pd
 import numpy as np
 import pickle
-
 
 app = Flask(__name__)
 
@@ -58,12 +56,27 @@ workout = pd.read_csv("datasets/workout_df.csv")
 description = pd.read_csv("datasets/description.csv")
 medications = pd.read_csv('datasets/medications.csv')
 diets = pd.read_csv("datasets/diets.csv")
-
+specialist_data = pd.read_csv('datasets/specialist.csv')
+details = pd.read_csv('datasets/specialist_details.csv', encoding='ISO-8859-1')
 #load model
 svc = pickle.load(open("models/svc.pkl", 'rb'))
 
+def best_specialist(spec):
+    name = details[details['Specialist'] == spec]["Name"]
+    ratings = details[details['Specialist'] == spec]["Ratings"]
+    experience = details[details['Specialist'] == spec]["Experience"]
+    avail = details[details['Specialist'] == spec]["Available Days"]
+    appointment = details[details['Specialist'] == spec]["Appointment Times"]
+    location = details[details['Specialist'] == spec]["Location"]
+    best_speacialist=0
+    for i in ratings:
+        best_speacialist=max(best_speacialist,i)
+
+
 
 def helper(dis):
+    spec = specialist_data[specialist_data['Disease'] == dis]['Specialist']
+    spec = " ".join([s for s in spec])
     desc = description[description['Disease'] == dis]['Description']
     desc = " ".join([w for w in desc])
 
@@ -78,7 +91,22 @@ def helper(dis):
 
     wrkout = workout[workout['disease'] == dis]['workout']
 
-    return desc, pre, med, die, wrkout
+    ratings = details[details['Specialist'] == spec]["Ratings"]
+
+    # best_specialist = 0
+    # for i in ratings:
+    #     best_specialist = max(best_specialist, i)
+    # print(best_specialist)
+    name = details[details['Specialist'] == spec]["Name"]
+    ratings = details[details['Specialist'] == spec]["Ratings"]
+    experience = details[details['Specialist'] == spec]["Experience"]
+    avail = details[details['Specialist'] == spec]["Available Days"]
+    appointment = details[details['Specialist'] == spec]["Appointment Times"]
+    location = details[details['Specialist'] == spec]["Location"]
+    print(name[0])
+    for names in name:
+        print(names)
+    return desc, pre, med, die, wrkout, spec, name, ratings, experience, avail, appointment, location
 
 
 def get_predicted_value(patient_symptoms):
@@ -87,11 +115,13 @@ def get_predicted_value(patient_symptoms):
         input_vector[symptoms_dict[item]] = 1
     return diseases_list[svc.predict([input_vector])[0]]
 
+
 @app.route("/")
 def index():
     return render_template("index.html")
 
-@app.route('/predict', methods=['POST','GET'])
+
+@app.route('/predict', methods=['POST', 'GET'])
 def predict():
     if request.method == "POST":
         symptoms = request.form.get('symptoms')
@@ -100,25 +130,30 @@ def predict():
         user_symptoms = [symptom.strip("[]' ") for symptom in user_symptoms]
         predicted_disease = get_predicted_value(user_symptoms)
         print(predicted_disease)
-        desc, pre, med, die, wrkout = helper(predicted_disease)
+        desc, pre, med, die, wrkout, spec, name, ratings, experience, avail, appointment, location = helper(predicted_disease)
         symptoms = request.form.get('symptoms')
 
-        return render_template("index.html", predicted_disease=predicted_disease, dis_des=desc, dis_pre=pre,
-                               dis_med=med, dis_wrkout=wrkout)
+        return render_template("index.html", predicted_disease=predicted_disease, dis_des=desc, my_precautions=pre,
+                               medications=med, workout=wrkout, specialist=spec, specialist_name = name,specialist_ratings = ratings, specialist_exp = experience, specialist_avai = avail, specialist_appoit = appointment, specialist_loc = location)
+
 
 # about view funtion and path
 @app.route('/about')
 def about():
     return "<html><body><h1>Hiiiii</h1></body></html>"
+
+
 # contact view funtion and path
 @app.route('/contact')
 def contact():
     return render_template("contact.html")
 
+
 # developer view funtion and path
 @app.route('/developer')
 def developer():
     return render_template("developer.html")
+
 
 # about view funtion and path
 @app.route('/blog')
