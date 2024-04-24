@@ -50,10 +50,12 @@ diseases_list = {15: 'Fungal infection', 4: 'Allergy', 16: 'GERD', 9: 'Chronic c
                  35: 'Psoriasis', 27: 'Impetigo'}
 
 #load datasets
-sym_des = pd.read_csv("datasets/symtoms_df.csv")
-precautions = pd.read_csv("datasets/precautions_df.csv")
-workout = pd.read_csv("datasets/workout_df.csv")
-description = pd.read_csv("datasets/description.csv")
+symptoms = list(symptoms_dict.keys())
+print(symptoms)
+sym_des = pd.read_csv("datasets/collection_symtoms.csv")
+precautions = pd.read_csv("datasets/disease_precautions.csv")
+workout = pd.read_csv("datasets/preventions_workout.csv")
+description = pd.read_csv("datasets/disease_description.csv")
 medications = pd.read_csv('datasets/medications.csv')
 diets = pd.read_csv("datasets/diets.csv")
 specialist_data = pd.read_csv('datasets/specialist.csv')
@@ -86,14 +88,12 @@ def helper(dis):
     med = medications[medications['Disease'] == dis]['Medication']
     med = ",".join([w for w in med])
 
+    die = diets[diets['Disease'] == dis]['Diet']
+    die = [die for die in die.values]
+
     wrkout = workout[workout['disease'] == dis]['workout']
-    print(spec)
-    ratings = details[details['Specialist'] == spec]["Ratings"]
-    print(med)
-    best_specialist = 0
-    for i in ratings:
-        best_specialist = max(best_specialist, i)
-    print(best_specialist)
+
+
     name = details[details['Specialist'] == spec]["Name"]
     ratings = details[details['Specialist'] == spec]["Ratings"]
     experience = details[details['Specialist'] == spec]["Experience"]
@@ -103,7 +103,7 @@ def helper(dis):
     print(name[0])
     for names in name:
         print(names)
-    return desc, pre, med, wrkout, spec, name, ratings, experience, avail, appointment, location
+    return desc, pre, med, die, wrkout, spec, name, ratings, experience, avail, appointment, location
 
 
 def get_predicted_value(patient_symptoms):
@@ -127,12 +127,12 @@ def predict():
         user_symptoms = [symptom.strip("[]' ") for symptom in user_symptoms]
         predicted_disease = get_predicted_value(user_symptoms)
         print(predicted_disease)
-        desc, pre, med, wrkout, spec, name, ratings, experience, avail, appointment, location = helper(predicted_disease)
+        desc, pre, med, die, wrkout, spec, name, ratings, experience, avail, appointment, location = helper(predicted_disease)
 
         symptoms = request.form.get('symptoms')
         print(spec)
         return render_template("index.html", predicted_disease=predicted_disease, dis_des=desc, my_precautions=pre,
-                               medications=med, workout=wrkout, specialist=spec, specialist_name = name,specialist_ratings = ratings, specialist_exp = experience, specialist_avai = avail, specialist_appoit = appointment, specialist_loc = location)
+                               medications=med,diet_req= die, workout=wrkout, specialist=spec, specialist_name = name,specialist_ratings = ratings, specialist_exp = experience, specialist_avai = avail, specialist_appoit = appointment, specialist_loc = location, symptoms_list=symptoms)
 
 
 # about view funtion and path
